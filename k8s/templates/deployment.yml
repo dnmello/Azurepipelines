@@ -1,0 +1,49 @@
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "${APP}"
+  namespace: "${NAMESPACE}"
+  labels:
+    app: "${APP}"
+spec:
+  replicas: ${REPLICAS}
+  selector:
+    matchLabels:
+      app: "${APP}"
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate  
+  template:
+    metadata:
+      labels:
+        app: "${APP}"
+    spec:
+      containers:
+      - name: "${APP}"
+        image: "${IMAGE}"
+        imagePullPolicy: Always
+        resources:
+            limits:
+              memory: 512Mi
+            requests:
+              memory: 256Mi
+        env:
+          - name: NODE_ENV
+            value: "${NODE_ENV}"
+          - name: AZP_URL
+            value: "${AZP_URL}"
+          - name: AZP_TOKEN
+            value: "${AZP_TOKEN}"
+          - name: AZP_POOL
+            value: "${AZP_POOL}"
+        volumeMounts:
+          - mountPath: /var/run/docker.sock
+            name: host-docker-socket
+      imagePullSecrets:
+      - name: ${IMAGE_PULL_SECRETS}
+      volumes:
+        - name: host-docker-socket
+          hostPath:
+            path: /var/run/docker.sock
