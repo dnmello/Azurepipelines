@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  dbserver-self-hosted-agent:
+    image: dbserver.azurecr.io/dbserver-self-hosted-agent:dotnet-core-sdk-3.1.202-bionic
+    container_name: dbserver-self-hosted-agent
+    environment:
+     - NODE_ENV=production
+     - AZP_URL=https://dev.azure.com/<ACCOUNT_NAME>
+     - AZP_TOKEN=<TOKEN>
+     - AZP_POOL=<POOL_NAME>
+     - AZP_AGENT_NAME=dbserver-self-hosted-agent
+    build:
+      context: src
+      dockerfile: dockeragent/Dockerfile
